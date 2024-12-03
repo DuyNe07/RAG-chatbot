@@ -48,15 +48,24 @@ def create_db_from_pdf():
     chunks = text_splitter.split_documents(documents)
 
     # Embedding văn bản
-    embedding_model = GPT4AllEmbeddings(model_file="models/all-MiniLM-L6-v2-f16.gguf", use_gpu=True)  # Đảm bảo sử dụng GPU
+    embedding_model = GPT4AllEmbeddings(model_file="models/vinallama-7b-chat_q5_0.gguf", use_gpu=True)  # Đảm bảo sử dụng GPU
 
     # Tạo FAISS với GPU
-    db = FAISS.from_documents(chunks, embedding_model)
+    
+    # Nếu GPU có sẵn, chuyển index FAISS lên GPU
+    if faiss.get_num_gpus() > 0:
+        print(f"FAISS index đang chạy trên GPU.")
+        db = FAISS.from_documents(chunks, embedding_model)
+        gpu_res = faiss.StandardGpuResources()  # Tạo tài nguyên GPU
+        db.index = faiss.index_cpu_to_gpu(gpu_res, 0, db.index)  # Chuyển FAISS index lên GPU 0
+        db.index = faiss.index_gpu_to_cpu(db.index)  # Chuyển FAISS index về CPU
+    else:
+        print("FAISS sẽ sử dụng CPU vì không có GPU khả dụng.")
 
-    # FAISS sẽ tự động sử dụng GPU nếu bạn đã cài đặt faiss-gpu
+    # Lưu vector DB vào ổ đĩa
     db.save_local(vector_db_path)
-    return db
 
+    return db
 
 # Gọi hàm tạo DB từ PDF
 create_db_from_pdf()
