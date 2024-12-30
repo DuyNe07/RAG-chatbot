@@ -22,6 +22,7 @@ def load_llm(model_file):
         verbose=False,
     )
     return llm
+    
 def create_prompt(template):
     prompt = PromptTemplate(template=template, input_variables=["context", "question"])
     return prompt

@@ -61,6 +61,7 @@ def create_db_from_pdf():
         db.index = faiss.index_gpu_to_cpu(db.index)  # Chuyển FAISS index về CPU
     else:
         print("FAISS sẽ sử dụng CPU vì không có GPU khả dụng.")
+        db = FAISS.from_documents(chunks, embedding_model)
 
     # Lưu vector DB vào ổ đĩa
     db.save_local(vector_db_path)

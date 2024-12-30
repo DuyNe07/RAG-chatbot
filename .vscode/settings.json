@@ -5,10 +5,12 @@
     "cSpell.words": [
         "asssistant",
         "ctransformers",
+        "cuda",
         "Doji",
         "FAISS",
         "GGML",
         "gguf",
+        "hkunlp",
         "huggingface",
         "Hungging",
         "ndarray",
